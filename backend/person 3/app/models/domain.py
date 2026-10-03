@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, Text, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from app.database import Base
 
 class Project(Base):
@@ -9,8 +9,8 @@ class Project(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True, nullable=False)
     status = Column(String, default="draft", index=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     assets = relationship("Asset", back_populates="project", cascade="all, delete-orphan")
     scripts = relationship("Script", back_populates="project", cascade="all, delete-orphan")
@@ -29,7 +29,7 @@ class Asset(Base):
     mime_type = Column(String)
     file_size = Column(Integer)
     duration = Column(Float)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     project = relationship("Project", back_populates="assets")
     transcripts = relationship("Transcript", back_populates="asset")
@@ -42,8 +42,8 @@ class Script(Base):
     project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), index=True, nullable=False)
     content = Column(Text, nullable=False)
     version = Column(Integer, default=1)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     project = relationship("Project", back_populates="scripts")
 
@@ -57,8 +57,8 @@ class Job(Base):
     progress = Column(Float, default=0.0)
     error_message = Column(Text)
     result_json = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
     project = relationship("Project", back_populates="jobs")
 
@@ -68,7 +68,7 @@ class Transcript(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), index=True, nullable=False)
     asset_id = Column(Integer, ForeignKey("assets.id", ondelete="SET NULL"), index=True, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     project = relationship("Project", back_populates="transcripts")
     asset = relationship("Asset", back_populates="transcripts")
@@ -98,7 +98,7 @@ class Clip(Base):
     reason = Column(Text)
     status = Column(String)
     video_path = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     project = relationship("Project", back_populates="clips")
     source_asset = relationship("Asset", back_populates="clips_as_source")
@@ -136,7 +136,7 @@ class Edit(Base):
     clip_id = Column(Integer, ForeignKey("clips.id", ondelete="CASCADE"), index=True, nullable=False)
     edit_type = Column(String, nullable=False)
     edit_data = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     clip = relationship("Clip", back_populates="edits")
 
@@ -167,7 +167,7 @@ class Export(Base):
     platform_variant_id = Column(Integer, ForeignKey("platform_variants.id", ondelete="SET NULL"), index=True, nullable=True)
     status = Column(String, nullable=False)
     file_path = Column(String)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     clip = relationship("Clip", back_populates="exports")
     platform_variant = relationship("PlatformVariant", back_populates="exports")

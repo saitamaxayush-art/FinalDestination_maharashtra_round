@@ -1,5 +1,5 @@
 from .base_processing import BaseProcessingService
-from .mock_processing_service import MockProcessingService
+from .processing_service import ProcessingService
 
 def get_processing_service() -> BaseProcessingService:
-    return MockProcessingService()
+    return ProcessingService()
