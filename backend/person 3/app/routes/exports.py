@@ -14,9 +14,12 @@ class ExportRequest(BaseModel):
 
 async def run_render_job(job_id: int, export_id: int, request: RenderRequest):
     from app.database import SessionLocal
+    from app.services.renderer import FFmpegRenderer, MockRenderer
+    from app.config import settings
+    
     db = SessionLocal()
     try:
-        renderer = MockRenderer()
+        renderer = FFmpegRenderer() if getattr(settings, "AI_ENGINE_TYPE", "mock") == "real" else MockRenderer()
         
         export = db.query(Export).filter(Export.id == export_id).first()
         job = db.query(Job).filter(Job.id == job_id).first()

@@ -252,8 +252,26 @@ export const ClipsPage: React.FC = () => {
                   </div>
 
                   {/* 9:16 Video Preview Frame */}
-                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between p-3 relative overflow-hidden">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-white/80 z-10">
+                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between p-0 relative overflow-hidden group">
+                    <video
+                      src={`http://localhost:8000/uploads/${clip.sourceAssetId}`}
+                      controls
+                      playsInline
+                      preload="metadata"
+                      className="absolute inset-0 w-full h-full object-cover"
+                      onTimeUpdate={(e) => {
+                        const video = e.currentTarget;
+                        if (video.currentTime >= clip.endTime) {
+                          video.pause();
+                          video.currentTime = clip.startTime;
+                        }
+                      }}
+                      onLoadedMetadata={(e) => {
+                        e.currentTarget.currentTime = clip.startTime;
+                      }}
+                    />
+                    
+                    <div className="absolute top-0 inset-x-0 p-3 flex items-center justify-between text-[10px] font-mono text-white/80 z-10 pointer-events-none">
                       <span className="px-1.5 py-0.5 rounded bg-black/60">
                         IN 00:{clip.startTime.toFixed(1)}
                       </span>
@@ -262,15 +280,8 @@ export const ClipsPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="text-center z-10">
-                      <Play className="w-8 h-8 text-signal mx-auto mb-1 opacity-90" />
-                      <span className="text-[11px] text-white font-medium block">
-                        Preview Cut
-                      </span>
-                    </div>
-
                     {clip.suggestedHook && (
-                      <div className="z-10 p-2 rounded bg-black/80 border border-white/20 text-[11px] text-white leading-tight">
+                      <div className="absolute bottom-0 inset-x-0 z-10 p-2 m-3 rounded bg-black/80 border border-white/20 text-[11px] text-white leading-tight pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
                         <span className="text-[9px] uppercase font-mono text-signal block mb-0.5">
                           Suggested Hook
                         </span>
