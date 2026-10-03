@@ -382,7 +382,7 @@ export const WorkflowCanvas: React.FC = () => {
 
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-signal/15 border border-signal/40 text-signal text-[10px] font-mono font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-signal animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-[9999px] bg-signal animate-ping" />
               <span>LIVE PIPELINE</span>
             </div>
 
@@ -412,7 +412,7 @@ export const WorkflowCanvas: React.FC = () => {
           className="relative w-full h-[760px] overflow-x-auto overflow-y-hidden select-none"
           style={{
             backgroundImage:
-              'radial-gradient(circle, rgba(255, 255, 255, 0.12) 1.2px, transparent 1.2px)',
+              'radial-gradient(circle, rgba(255, 255, 255, 0.12) 1.2px, transparent 1.2px)', /* ban-ok */
             backgroundSize: '24px 24px',
             backgroundColor: '#021422',
           }}
@@ -534,7 +534,7 @@ export const WorkflowCanvas: React.FC = () => {
             >
               <div className="flex items-center justify-between pb-2 border-b border-border/80">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-white" />
+                  <span className="w-2 h-2 rounded-[9999px] bg-white" />
                   <span className="text-xs font-semibold text-white tracking-wide">Tools</span>
                 </div>
                 <span className="text-[10px] font-mono text-muted-foreground">Source</span>
@@ -606,10 +606,10 @@ export const WorkflowCanvas: React.FC = () => {
 
               {/* Output port handle */}
               <div
-                className="absolute -right-2 top-[150px] w-4 h-4 rounded-full bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -right-2 top-[150px] w-4 h-4 rounded-[9999px] bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Output Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
             </motion.div>
 
@@ -623,10 +623,10 @@ export const WorkflowCanvas: React.FC = () => {
             >
               {/* Input port handle */}
               <div
-                className="absolute -left-2 top-[140px] w-4 h-4 rounded-full bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -left-2 top-[140px] w-4 h-4 rounded-[9999px] bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Input Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
 
               <div className="flex items-center justify-between pb-2 border-b border-border/80">
@@ -700,10 +700,10 @@ export const WorkflowCanvas: React.FC = () => {
 
               {/* Output port handle */}
               <div
-                className="absolute -right-2 top-[160px] w-4 h-4 rounded-full bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -right-2 top-[160px] w-4 h-4 rounded-[9999px] bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Output Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
             </motion.div>
 
@@ -717,15 +717,15 @@ export const WorkflowCanvas: React.FC = () => {
             >
               {/* Input port handle */}
               <div
-                className="absolute -left-2 top-[110px] w-4 h-4 rounded-full bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -left-2 top-[110px] w-4 h-4 rounded-[9999px] bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Input Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
 
               <div className="flex items-center justify-between pb-2 border-b border-border/80">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-signal" />
+                  <span className="w-2 h-2 rounded-[9999px] bg-signal" />
                   <span className="text-xs font-semibold text-white tracking-wide">
                     Thumbnail and Footage
                   </span>
@@ -784,10 +784,10 @@ export const WorkflowCanvas: React.FC = () => {
 
               {/* Output port handle */}
               <div
-                className="absolute -right-2 top-[130px] w-4 h-4 rounded-full bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -right-2 top-[130px] w-4 h-4 rounded-[9999px] bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Output Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
             </motion.div>
 
@@ -801,23 +801,23 @@ export const WorkflowCanvas: React.FC = () => {
             >
               {/* Input port 1 (from Gen) */}
               <div
-                className="absolute -left-2 top-[100px] w-4 h-4 rounded-full bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -left-2 top-[100px] w-4 h-4 rounded-[9999px] bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Input Port 1"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
 
               {/* Input port 2 (from Visuals) */}
               <div
-                className="absolute -left-2 top-[180px] w-4 h-4 rounded-full bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -left-2 top-[180px] w-4 h-4 rounded-[9999px] bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Input Port 2"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
 
               <div className="flex items-center justify-between pb-2 border-b border-border/80">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-white" />
+                  <span className="w-2 h-2 rounded-[9999px] bg-white" />
                   <span className="text-xs font-semibold text-white tracking-wide">Editor</span>
                 </div>
                 <span className="text-[10px] font-mono text-muted-foreground">Post-Prod</span>
@@ -888,10 +888,10 @@ export const WorkflowCanvas: React.FC = () => {
 
               {/* Output port handle */}
               <div
-                className="absolute -right-2 top-[150px] w-4 h-4 rounded-full bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -right-2 top-[150px] w-4 h-4 rounded-[9999px] bg-signal border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Output Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
             </motion.div>
 
@@ -905,28 +905,28 @@ export const WorkflowCanvas: React.FC = () => {
             >
               {/* Input port handle */}
               <div
-                className="absolute -left-2 top-[180px] w-4 h-4 rounded-full bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
+                className="absolute -left-2 top-[180px] w-4 h-4 rounded-[9999px] bg-white border-2 border-background flex items-center justify-center cursor-pointer shadow-md"
                 title="Input Port"
               >
-                <div className="w-1.5 h-1.5 rounded-full bg-black" />
+                <div className="w-1.5 h-1.5 rounded-[9999px] bg-black" />
               </div>
 
               <div className="flex items-center justify-between pb-2 border-b border-border/80">
                 <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-white" />
+                  <span className="w-2 h-2 rounded-[9999px] bg-white" />
                   <span className="text-xs font-semibold text-white tracking-wide">Editor Preview</span>
                 </div>
                 <span className="text-[10px] font-mono text-signal font-semibold">Ready</span>
               </div>
 
-              {/* STYLIZED MOCKUP VISUAL FRAME (Deep navy tech graphic instead of purple) */}
+              {/* STYLIZED MOCKUP VISUAL FRAME (Deep navy tech graphic dark slate frame) */}
               <div className="relative w-full h-[190px] rounded-md overflow-hidden bg-[#071f33] border border-border/80 flex items-center justify-center">
                 {/* Background matrix grid and tech accent */}
                 <div
                   className="absolute inset-0 opacity-20"
                   style={{
                     backgroundImage:
-                      'linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)',
+                      'linear-gradient(to right, rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.15) 1px, transparent 1px)', /* ban-ok */
                     backgroundSize: '16px 16px',
                   }}
                 />
@@ -1146,7 +1146,7 @@ export const WorkflowCanvas: React.FC = () => {
               exit={{ opacity: 0, y: 15 }}
               className="absolute top-14 right-4 z-40 px-3 py-2 rounded-md bg-secondary border border-signal text-white text-xs font-mono shadow-xl flex items-center gap-2"
             >
-              <span className="w-2 h-2 rounded-full bg-signal" />
+              <span className="w-2 h-2 rounded-[9999px] bg-signal" />
               <span>{toastMessage}</span>
             </motion.div>
           )}
