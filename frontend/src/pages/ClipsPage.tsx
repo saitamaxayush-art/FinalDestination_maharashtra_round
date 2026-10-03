@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { detectClips } from '../services/mockAiService';
-import { fetchProjectClips } from '../services/api';
 import {
   Scissors,
   Check,
@@ -25,7 +24,6 @@ export const ClipsPage: React.FC = () => {
     acceptClip,
     rejectClip,
     duplicateClip,
-    backendProjectId,
   } = useStore();
 
   const [isDetecting, setIsDetecting] = useState(false);
@@ -43,33 +41,7 @@ export const ClipsPage: React.FC = () => {
 
     setDetectionStep('Cutting candidate short-form boundaries...');
     const pinnedHook = script.hooks.find((h) => h.id === script.pinnedHookId);
-    
-    let newClips = [];
-    if (backendProjectId) {
-      try {
-        const fetchedClips = await fetchProjectClips(backendProjectId);
-        if (Array.isArray(fetchedClips) && fetchedClips.length > 0) {
-          newClips = fetchedClips.map((c: any) => ({
-             id: String(c.id),
-             title: c.title || `Clip ${c.id}`,
-             sourceAssetId: c.asset_id ? String(c.asset_id) : 'sample_asset_1',
-             startTime: c.start_time,
-             endTime: c.end_time,
-             duration: Math.round((c.end_time - c.start_time) * 10) / 10,
-             reason: c.reason || 'Detected via AI',
-             suggestedHook: pinnedHook?.text || '',
-             status: 'candidate',
-             aspectRatio: '9:16',
-          }));
-        }
-      } catch (err) {
-        console.error('Failed to fetch project clips from backend', err);
-      }
-    }
-    
-    if (newClips.length === 0) {
-      newClips = await detectClips('sample_asset_1', pinnedHook?.text);
-    }
+    const newClips = await detectClips('sample_asset_1', pinnedHook?.text);
 
     setClips(newClips);
     setIsDetecting(false);
@@ -252,26 +224,8 @@ export const ClipsPage: React.FC = () => {
                   </div>
 
                   {/* 9:16 Video Preview Frame */}
-                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between p-0 relative overflow-hidden group">
-                    <video
-                      src={`http://localhost:8000/uploads/${clip.sourceAssetId}`}
-                      controls
-                      playsInline
-                      preload="metadata"
-                      className="absolute inset-0 w-full h-full object-cover"
-                      onTimeUpdate={(e) => {
-                        const video = e.currentTarget;
-                        if (video.currentTime >= clip.endTime) {
-                          video.pause();
-                          video.currentTime = clip.startTime;
-                        }
-                      }}
-                      onLoadedMetadata={(e) => {
-                        e.currentTarget.currentTime = clip.startTime;
-                      }}
-                    />
-                    
-                    <div className="absolute top-0 inset-x-0 p-3 flex items-center justify-between text-[10px] font-mono text-white/80 z-10 pointer-events-none">
+                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between p-3 relative overflow-hidden">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-white/80 z-10">
                       <span className="px-1.5 py-0.5 rounded bg-black/60">
                         IN 00:{clip.startTime.toFixed(1)}
                       </span>
@@ -280,8 +234,15 @@ export const ClipsPage: React.FC = () => {
                       </span>
                     </div>
 
+                    <div className="text-center z-10">
+                      <Play className="w-8 h-8 text-signal mx-auto mb-1 opacity-90" />
+                      <span className="text-[11px] text-white font-medium block">
+                        Preview Cut
+                      </span>
+                    </div>
+
                     {clip.suggestedHook && (
-                      <div className="absolute bottom-0 inset-x-0 z-10 p-2 m-3 rounded bg-black/80 border border-white/20 text-[11px] text-white leading-tight pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="z-10 p-2 rounded bg-black/80 border border-white/20 text-[11px] text-white leading-tight">
                         <span className="text-[9px] uppercase font-mono text-signal block mb-0.5">
                           Suggested Hook
                         </span>

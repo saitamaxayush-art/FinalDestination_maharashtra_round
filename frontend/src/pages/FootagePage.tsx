@@ -207,35 +207,13 @@ export const FootagePage: React.FC = () => {
           {/* Simulated Video Player & Scrub Frame */}
           <div className="hairline-card p-4 space-y-3">
             <div className="w-full h-56 rounded-md bg-black border border-border flex flex-col items-center justify-center relative overflow-hidden">
-              {activeSegment ? (
-                <video
-                  src={`http://localhost:8000/uploads/${selectedAssetId}`}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="absolute inset-0 w-full h-full object-cover"
-                  onTimeUpdate={(e) => {
-                    const video = e.currentTarget;
-                    if (video.currentTime >= activeSegment.endTime) {
-                      video.pause();
-                      video.currentTime = activeSegment.startTime;
-                    }
-                  }}
-                  onLoadedMetadata={(e) => {
-                    e.currentTarget.currentTime = activeSegment.startTime;
-                  }}
-                />
-              ) : (
-                <>
-                  <Play className="w-10 h-10 text-signal opacity-80 mb-2" />
-                  <span className="text-xs text-white font-semibold">
-                    Select a line to scrub
-                  </span>
-                  <span className="text-[11px] font-mono text-muted-foreground mt-1">
-                    Timecode: 00:00.0
-                  </span>
-                </>
-              )}
+              <Play className="w-10 h-10 text-signal opacity-80 mb-2" />
+              <span className="text-xs text-white font-semibold">
+                {activeSegment ? activeSegment.label : 'Select a line to scrub'}
+              </span>
+              <span className="text-[11px] font-mono text-muted-foreground mt-1">
+                Timecode: {activeSegment ? `00:${activeSegment.startTime.toFixed(1)} - 00:${activeSegment.endTime.toFixed(1)}` : '00:00.0'}
+              </span>
             </div>
 
             {/* Segment blocks list (Drop Target) */}

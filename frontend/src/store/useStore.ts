@@ -93,15 +93,6 @@ interface AppState {
 
   // Global reset
   resetAllData: () => void;
-
-  // Backend state
-  backendProjectId: number | null;
-  setBackendProjectId: (id: number) => void;
-  backendJobId: number | null;
-  setBackendJobId: (id: number | null) => void;
-  jobStatus: string | null;
-  jobProgress: number;
-  setJobState: (status: string, progress: number) => void;
 }
 
 const INITIAL_FOLDERS: Folder[] = [
@@ -354,6 +345,22 @@ const INITIAL_WORKFLOW_CARDS: WorkflowCard[] = [
   },
 ];
 
+const isEmbedMode = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('embed') === '1' || window.location.search.includes('embed=1');
+};
+
+const memoryStore = new Map<string, string>();
+const inMemoryStorage = {
+  getItem: (name: string): string | null => memoryStore.get(name) ?? null,
+  setItem: (name: string, value: string): void => {
+    memoryStore.set(name, value);
+  },
+  removeItem: (name: string): void => {
+    memoryStore.delete(name);
+  },
+};
+
 export const useStore = create<AppState>()(
   persist(
     (set) => ({
@@ -362,14 +369,6 @@ export const useStore = create<AppState>()(
       folders: INITIAL_FOLDERS,
       selectedAssetId: null,
       deletedAssetBackup: null,
-      
-      backendProjectId: null,
-      setBackendProjectId: (id) => set({ backendProjectId: id }),
-      backendJobId: null,
-      setBackendJobId: (id) => set({ backendJobId: id }),
-      jobStatus: null,
-      jobProgress: 0,
-      setJobState: (status, progress) => set({ jobStatus: status, jobProgress: progress }),
 
       addAsset: (asset) =>
         set((state) => ({ assets: [asset, ...state.assets] })),
@@ -931,7 +930,8 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'creatorai_demo_state',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => (isEmbedMode() ? inMemoryStorage : localStorage)),
     }
   )
 );
+

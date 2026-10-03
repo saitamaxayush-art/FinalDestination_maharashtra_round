@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { TrackType } from '../types';
-import { submitClipEdits } from '../services/api';
 import {
   Play,
   Pause,
@@ -30,8 +29,6 @@ export const EditorPage: React.FC = () => {
     convertLayerToManual,
     updateLayerContent,
     revertHistoryItem,
-    activeClipId,
-    clips,
   } = useStore();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -43,25 +40,8 @@ export const EditorPage: React.FC = () => {
   const TRACKS: TrackType[] = ['Video', 'Captions', 'Audio', 'Overlays'];
 
   const selectedLayer = editorLayers.find((l) => l.id === selectedLayerId);
-  const activeClip = clips.find((c) => c.id === activeClipId);
 
-  const handleExportToPlatforms = async () => {
-    try {
-      const numericId = parseInt(activeClipId?.replace(/\D/g, '') || '0');
-      if (numericId > 0) {
-        const operations = editorLayers.map(l => ({
-          type: l.isAiGenerated ? 'ai_suggestion' : 'manual',
-          track: l.trackId,
-          action: l.title,
-          payload: l.content,
-          start_time: l.startTime,
-          duration: l.duration
-        }));
-        await submitClipEdits(numericId, operations);
-      }
-    } catch (err) {
-      console.error('Failed to submit clip edits', err);
-    }
+  const handleExportToPlatforms = () => {
     navigate('/platforms');
   };
 
@@ -137,37 +117,15 @@ export const EditorPage: React.FC = () => {
 
           {/* Canvas Box */}
           <div className="w-full h-80 rounded-md bg-black border border-border flex items-center justify-center relative overflow-hidden">
-            {/* Functional Background Video */}
-            {activeClip ? (
-              <video
-                src={`http://localhost:8000/uploads/${activeClip.sourceAssetId}`}
-                controls
-                playsInline
-                preload="metadata"
-                className="absolute inset-0 w-full h-full object-cover"
-                onTimeUpdate={(e) => {
-                  const video = e.currentTarget;
-                  if (video.currentTime >= activeClip.endTime) {
-                    video.pause();
-                    video.currentTime = activeClip.startTime;
-                  }
-                  // Optionally sync back to playheadTime state if we want two-way bind,
-                  // but we'll leave setPlayheadTime logic out to avoid loops, just respect boundaries.
-                }}
-                onLoadedMetadata={(e) => {
-                  e.currentTarget.currentTime = activeClip.startTime;
-                }}
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-secondary/70">
-                <span className="text-xs font-mono text-muted-foreground mb-1">
-                  Visual Track: A-Roll Main Shot
-                </span>
-                <h3 className="font-display text-2xl text-white max-w-sm">
-                  Why do video creators spend 14 hours editing a single video?
-                </h3>
-              </div>
-            )}
+            {/* Background talking head representation */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-secondary/70">
+              <span className="text-xs font-mono text-muted-foreground mb-1">
+                Visual Track: A-Roll Main Shot
+              </span>
+              <h3 className="font-display text-2xl text-white max-w-sm">
+                Why do video creators spend 14 hours editing a single video?
+              </h3>
+            </div>
 
             {/* Overlays / Captions Active Preview */}
             <div className="absolute bottom-12 inset-x-6 text-center z-20">

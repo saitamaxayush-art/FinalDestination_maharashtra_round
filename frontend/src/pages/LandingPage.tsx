@@ -19,6 +19,7 @@ import {
 import { PIPELINE_STEPS } from '../config/nav';
 import { matchScriptToFootage } from '../services/mockAiService';
 import { ScriptLineMatch } from '../types';
+import { StorySection } from '../story/StorySection';
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -128,6 +129,9 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ===================== CINEMATIC PRODUCT STORY ===================== */}
+      <StorySection />
 
       {/* ===================== PIPELINE SECTION ===================== */}
       <section

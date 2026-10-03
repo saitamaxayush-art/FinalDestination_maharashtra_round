@@ -17,6 +17,8 @@ import { InsightsPage } from './pages/InsightsPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { useLenisScrollTrigger } from './story/useLenisScrollTrigger';
+import { EmbedTourListener } from './story/EmbedTourListener';
 
 // Scroll to top helper on route change
 const ScrollToTop: React.FC = () => {
@@ -63,9 +65,13 @@ const AnimatedRoutes: React.FC = () => {
 };
 
 export const App: React.FC = () => {
+  useLenisScrollTrigger();
+  const isEmbed = typeof window !== 'undefined' && (new URLSearchParams(window.location.search).get('embed') === '1');
+
   return (
     <BrowserRouter>
       <ScrollToTop />
+      <EmbedTourListener />
 
       {/* Subtle film grain overlay (feTurbulence SVG noise) */}
       <svg className="film-grain" aria-hidden="true">
@@ -83,11 +89,11 @@ export const App: React.FC = () => {
 
       {/* Main app container with subtle 1px grid pattern on solid navy */}
       <div className="min-h-screen flex flex-col bg-background bg-grid-pattern relative">
-        <Navbar />
+        {!isEmbed && <Navbar />}
         <main className="flex-1 flex flex-col">
           <AnimatedRoutes />
         </main>
-        <Footer />
+        {!isEmbed && <Footer />}
       </div>
     </BrowserRouter>
   );

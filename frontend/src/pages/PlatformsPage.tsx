@@ -4,7 +4,6 @@ import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { PLATFORM_SPECS } from '../config/platforms';
 import { adaptForPlatform } from '../services/mockAiService';
-import { adaptClipPlatform } from '../services/api';
 import {
   Sparkles,
   Columns,
@@ -20,7 +19,6 @@ export const PlatformsPage: React.FC = () => {
     setSelectedPlatformId,
     updatePlatformVariant,
     queueVariantToWorkflow,
-    activeClipId,
   } = useStore();
 
   const [isAdaptingAll, setIsAdaptingAll] = useState(false);
@@ -49,17 +47,8 @@ export const PlatformsPage: React.FC = () => {
     setIsAdaptingAll(false);
   };
 
-  const handleQueueCurrent = async () => {
+  const handleQueueCurrent = () => {
     queueVariantToWorkflow(selectedPlatformId);
-    
-    try {
-      const numericId = parseInt(activeClipId?.replace(/\D/g, '') || '0');
-      if (numericId > 0) {
-        await adaptClipPlatform(numericId, selectedPlatformId);
-      }
-    } catch (err) {
-      console.error('Failed to adapt platform on backend', err);
-    }
   };
 
   // Aspect ratio calculation for preview container

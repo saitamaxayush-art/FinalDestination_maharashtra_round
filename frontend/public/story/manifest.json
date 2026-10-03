@@ -1,0 +1,16 @@
+{
+  "frameCount": 204,
+  "fps": 24,
+  "duration": 8.5,
+  "desktop": {
+    "width": 1280,
+    "height": 720,
+    "pathPattern": "/story/desktop/f_%03d.webp"
+  },
+  "mobile": {
+    "width": 854,
+    "height": 480,
+    "pathPattern": "/story/mobile/f_%03d.webp"
+  },
+  "poster": "/story/poster.webp"
+}
