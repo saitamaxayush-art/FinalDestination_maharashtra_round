@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { Asset, AssetType } from '../types';
+import { createProject, uploadAsset } from '../services/api';
 import {
   UploadCloud,
   Film,
@@ -37,6 +38,8 @@ export const AssetsPage: React.FC = () => {
     setSelectedAssetId,
     loadSampleAssets,
     clearSampleAssets,
+    backendProjectId,
+    setBackendProjectId,
   } = useStore();
 
   const [activeFolderId, setActiveFolderId] = useState<string | 'all'>('all');
@@ -58,6 +61,19 @@ export const AssetsPage: React.FC = () => {
   // File drag & drop upload
   const handleFileUpload = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
+
+    let projectId = backendProjectId;
+    if (!projectId) {
+      try {
+        const project = await createProject('Project ' + Date.now());
+        projectId = project.id;
+        setBackendProjectId(projectId);
+      } catch (err) {
+        console.error('Failed to create project', err);
+        setToastMessage('Failed to create project');
+        return;
+      }
+    }
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
@@ -101,8 +117,21 @@ export const AssetsPage: React.FC = () => {
         }
       }
 
+      let backendAssetId = `usr_${Date.now()}_${i}`;
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('asset_type', detectedType);
+        
+        // Wait for the backend upload to complete
+        const backendAsset = await uploadAsset(projectId, formData);
+        backendAssetId = String(backendAsset.id);
+      } catch (err) {
+        console.error('Failed to upload asset to backend', err);
+      }
+
       const newAsset: Asset = {
-        id: `usr_${Date.now()}_${i}`,
+        id: backendAssetId,
         name: file.name,
         type: detectedType,
         size: file.size,

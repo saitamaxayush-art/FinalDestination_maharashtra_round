@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { detectClips } from '../services/mockAiService';
+import { fetchProjectClips } from '../services/api';
 import {
   Scissors,
   Check,
@@ -24,6 +25,7 @@ export const ClipsPage: React.FC = () => {
     acceptClip,
     rejectClip,
     duplicateClip,
+    backendProjectId,
   } = useStore();
 
   const [isDetecting, setIsDetecting] = useState(false);
@@ -41,7 +43,33 @@ export const ClipsPage: React.FC = () => {
 
     setDetectionStep('Cutting candidate short-form boundaries...');
     const pinnedHook = script.hooks.find((h) => h.id === script.pinnedHookId);
-    const newClips = await detectClips('sample_asset_1', pinnedHook?.text);
+    
+    let newClips = [];
+    if (backendProjectId) {
+      try {
+        const fetchedClips = await fetchProjectClips(backendProjectId);
+        if (Array.isArray(fetchedClips) && fetchedClips.length > 0) {
+          newClips = fetchedClips.map((c: any) => ({
+             id: String(c.id),
+             title: c.title || `Clip ${c.id}`,
+             sourceAssetId: c.asset_id ? String(c.asset_id) : 'sample_asset_1',
+             startTime: c.start_time,
+             endTime: c.end_time,
+             duration: Math.round((c.end_time - c.start_time) * 10) / 10,
+             reason: c.reason || 'Detected via AI',
+             suggestedHook: pinnedHook?.text || '',
+             status: 'candidate',
+             aspectRatio: '9:16',
+          }));
+        }
+      } catch (err) {
+        console.error('Failed to fetch project clips from backend', err);
+      }
+    }
+    
+    if (newClips.length === 0) {
+      newClips = await detectClips('sample_asset_1', pinnedHook?.text);
+    }
 
     setClips(newClips);
     setIsDetecting(false);

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { TrackType } from '../types';
+import { submitClipEdits } from '../services/api';
 import {
   Play,
   Pause,
@@ -29,6 +30,7 @@ export const EditorPage: React.FC = () => {
     convertLayerToManual,
     updateLayerContent,
     revertHistoryItem,
+    activeClipId,
   } = useStore();
 
   const [isPlaying, setIsPlaying] = useState(false);
@@ -41,7 +43,23 @@ export const EditorPage: React.FC = () => {
 
   const selectedLayer = editorLayers.find((l) => l.id === selectedLayerId);
 
-  const handleExportToPlatforms = () => {
+  const handleExportToPlatforms = async () => {
+    try {
+      const numericId = parseInt(activeClipId?.replace(/\D/g, '') || '0');
+      if (numericId > 0) {
+        const operations = editorLayers.map(l => ({
+          type: l.isAiGenerated ? 'ai_suggestion' : 'manual',
+          track: l.trackId,
+          action: l.title,
+          payload: l.content,
+          start_time: l.startTime,
+          duration: l.duration
+        }));
+        await submitClipEdits(numericId, operations);
+      }
+    } catch (err) {
+      console.error('Failed to submit clip edits', err);
+    }
     navigate('/platforms');
   };
 

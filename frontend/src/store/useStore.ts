@@ -93,6 +93,15 @@ interface AppState {
 
   // Global reset
   resetAllData: () => void;
+
+  // Backend state
+  backendProjectId: number | null;
+  setBackendProjectId: (id: number) => void;
+  backendJobId: number | null;
+  setBackendJobId: (id: number | null) => void;
+  jobStatus: string | null;
+  jobProgress: number;
+  setJobState: (status: string, progress: number) => void;
 }
 
 const INITIAL_FOLDERS: Folder[] = [
@@ -353,6 +362,14 @@ export const useStore = create<AppState>()(
       folders: INITIAL_FOLDERS,
       selectedAssetId: null,
       deletedAssetBackup: null,
+      
+      backendProjectId: null,
+      setBackendProjectId: (id) => set({ backendProjectId: id }),
+      backendJobId: null,
+      setBackendJobId: (id) => set({ backendJobId: id }),
+      jobStatus: null,
+      jobProgress: 0,
+      setJobState: (status, progress) => set({ jobStatus: status, jobProgress: progress }),
 
       addAsset: (asset) =>
         set((state) => ({ assets: [asset, ...state.assets] })),

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { PageShell } from '../components/shared/PageShell';
 import { useStore } from '../store/useStore';
 import { generateHooks, generateScript } from '../services/mockAiService';
+import { uploadScript, startJob } from '../services/api';
 import { HookVariant, HookTechnique } from '../types';
 import {
   Sparkles,
@@ -22,6 +23,9 @@ export const ScriptsPage: React.FC = () => {
     updateHookText,
     updateSection,
     reorderSections,
+    backendProjectId,
+    setBackendJobId,
+    setJobState,
   } = useStore();
 
   const [isGeneratingHooks, setIsGeneratingHooks] = useState(false);
@@ -58,6 +62,22 @@ export const ScriptsPage: React.FC = () => {
     );
     setScriptField('sections', res.sections);
     setScriptField('supportingContent', res.supportingContent);
+
+    if (backendProjectId) {
+      try {
+        const fullContent = res.sections.map((s: any) => s.content).join('\n\n');
+        const scriptRes = await uploadScript(backendProjectId, fullContent);
+        
+        // Assuming video asset id 1 for mock since we may not have it strictly stored
+        const videoAssetId = 1; 
+        const jobRes = await startJob(backendProjectId, videoAssetId, scriptRes.id, {});
+        setBackendJobId(jobRes.id);
+        setJobState(jobRes.status, jobRes.progress || 0);
+      } catch (err) {
+        console.error('Failed to upload script and start job', err);
+      }
+    }
+
     setIsGeneratingScript(false);
   };
 
