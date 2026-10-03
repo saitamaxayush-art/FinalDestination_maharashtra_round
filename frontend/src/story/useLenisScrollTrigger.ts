@@ -1,50 +1,19 @@
 import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { STORY_CONFIG } from './story.config';
+import 'lenis/dist/lenis.css';
 
-// Register ScrollTrigger plugin with GSAP
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+let activeLenis: Lenis | null = null;
+export const getLenis = () => activeLenis;
 
 export function useLenisScrollTrigger(enabled = true) {
-  const lenisRef = useRef<Lenis | null>(null);
-
+  const ref = useRef<Lenis | null>(null);
   useEffect(() => {
-    // Check if embed mode or reduced motion
-    const searchParams = new URLSearchParams(window.location.search);
-    const isEmbed = searchParams.get('embed') === '1';
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    if (!enabled || isEmbed || prefersReducedMotion) {
-      return;
-    }
-
-    const lenis = new Lenis({
-      lerp: STORY_CONFIG.lenis.lerp,
-      smoothWheel: STORY_CONFIG.lenis.smoothWheel,
-      syncTouch: STORY_CONFIG.lenis.syncTouch,
-    });
-    lenisRef.current = lenis;
-
-    // Connect Lenis to GSAP ScrollTrigger
-    lenis.on('scroll', ScrollTrigger.update);
-
-    const tickerCb = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-
-    gsap.ticker.add(tickerCb);
-    gsap.ticker.lagSmoothing(0);
-
-    return () => {
-      gsap.ticker.remove(tickerCb);
-      lenis.destroy();
-      lenisRef.current = null;
-    };
+    if (!enabled || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.9, smoothWheel: true, syncTouch: false });
+    let raf = 0;
+    const loop = (time: number) => { if (!document.hidden) lenis.raf(time); raf = requestAnimationFrame(loop); };
+    activeLenis = lenis; ref.current = lenis; raf = requestAnimationFrame(loop);
+    return () => { cancelAnimationFrame(raf); lenis.destroy(); ref.current = null; if (activeLenis === lenis) activeLenis = null; };
   }, [enabled]);
-
-  return lenisRef;
+  return ref;
 }

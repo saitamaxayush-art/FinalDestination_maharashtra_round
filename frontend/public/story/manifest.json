@@ -1,7 +1,8 @@
 {
-  "frameCount": 204,
-  "fps": 24,
+  "frameCount": 408,
+  "fps": 48,
   "duration": 8.5,
+  "handoffFrame": 385,
   "desktop": {
     "width": 1280,
     "height": 720,

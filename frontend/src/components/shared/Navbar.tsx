@@ -3,15 +3,33 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ArrowRight } from 'lucide-react';
 import { LEFT_NAV_ITEMS, RIGHT_NAV_ITEMS, LEGAL_NAV_ITEMS } from '../../config/nav';
+import { hasSession } from '../../services/session';
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => hasSession());
   const navRef = useRef<HTMLDivElement>(null);
   const logoButtonRef = useRef<HTMLButtonElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Listen for session changes
+  useEffect(() => {
+    const handleSessionChange = () => {
+      setIsLoggedIn(hasSession());
+    };
+    window.addEventListener('creatorai:session-changed', handleSessionChange);
+    return () => window.removeEventListener('creatorai:session-changed', handleSessionChange);
+  }, []);
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   // Scroll progress calculation
   useEffect(() => {
@@ -116,6 +134,7 @@ export const Navbar: React.FC = () => {
                       >
                         <Link
                           to={item.path}
+                          onClick={item.path === '/' ? handleHomeClick : undefined}
                           className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors block relative ${
                             isActive
                               ? 'text-foreground font-semibold'
@@ -211,7 +230,7 @@ export const Navbar: React.FC = () => {
                       );
                     })}
 
-                    {/* Rectangular glass button "Open demo" */}
+                    {/* Rectangular glass button "Log in" / "Dashboard" */}
                     <motion.div
                       initial={{ opacity: 0, x: -8 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -220,10 +239,16 @@ export const Navbar: React.FC = () => {
                     >
                       <button
                         type="button"
-                        onClick={() => navigate('/assets')}
-                        className="ml-3 px-3 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-1.5"
+                        onClick={() => {
+                          if (isLoggedIn) {
+                            navigate('/dashboard');
+                          } else {
+                            navigate('/login');
+                          }
+                        }}
+                        className="ml-3 px-3.5 py-1.5 rounded-md text-xs font-medium tracking-wide uppercase bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all flex items-center gap-1.5"
                       >
-                        <span>Open demo</span>
+                        <span>{isLoggedIn ? 'Dashboard' : 'Log in'}</span>
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     </motion.div>
@@ -283,7 +308,10 @@ export const Navbar: React.FC = () => {
                     >
                       <Link
                         to={item.path}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          setIsMobileMenuOpen(false);
+                          if (item.path === '/') handleHomeClick(e);
+                        }}
                         className={`block font-display text-2xl sm:text-3xl tracking-tight py-1 transition-colors ${
                           location.pathname === item.path
                             ? 'text-signal'
@@ -329,11 +357,15 @@ export const Navbar: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setIsMobileMenuOpen(false);
-                    navigate('/assets');
+                    if (isLoggedIn) {
+                      navigate('/dashboard');
+                    } else {
+                      navigate('/login');
+                    }
                   }}
                   className="w-full sm:w-auto px-5 py-3 rounded-md bg-white text-black font-semibold text-sm flex items-center justify-center gap-2"
                 >
-                  <span>Open demo</span>
+                  <span>{isLoggedIn ? 'Dashboard' : 'Log in'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <div className="flex gap-4 text-xs text-muted-foreground">

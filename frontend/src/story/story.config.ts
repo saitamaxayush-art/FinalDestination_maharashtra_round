@@ -1,248 +1,249 @@
 import { DEFAULT_SCREEN_QUAD } from './quad';
 
-export type CaptionPosition =
-  | 'bottom-left'
-  | 'top-right'
-  | 'bottom-right'
-  | 'top-left'
-  | 'bottom-center';
+export type CaptionAnchor = 'bottom-left' | 'top-left' | 'bottom-right' | 'top-right' | 'bottom-center';
 
-export interface TourChapter {
+export interface StoryCaption {
   id: string;
+  stepNumber: string;
+  title: string;
+  sentence: string;
+  startP: number;
+  endP: number;
+  anchor: CaptionAnchor;
+}
+
+export interface PipelineCardData {
+  id: string;
+  module: string;
+  stepNumber: string;
   name: string;
-  title: string;
-  description: string;
-  route: string;
-  startP: number;
-  endP: number;
-  position: CaptionPosition;
+  input: string;
+  whatHappens: string;
+  output: string;
+  youStayInControl: string;
 }
 
-export interface VideoCaption {
-  id: string;
-  title: string;
-  description: string;
-  startP: number;
-  endP: number;
-  position: CaptionPosition;
-}
+// Derived timing constants from 48 FPS source
+export const FPS = 48;
+export const TOTAL_FRAMES = 408;
+export const HANDOFF_FRAME = Math.round(8.0 * FPS) + 1; // Frame 385 (8.0s)
+export const LAST_FRAME = 408; // Frame 408 (8.5s)
+
+export const COVER_FOCUS = { x: 0.5, y: 0.5 };
+
+export const SMOOTHING = {
+  lenisLerp: 0.075,
+  followerDamping: 8.0,
+  inertiaLimit: 0.004,
+};
 
 export const STORY_CONFIG = {
-  // Pinned scroll container length
-  pinnedHeightVh: 1100,
+  // Pinned scroll container length (Step 2: 1800vh)
+  pinnedHeightVh: 1800,
+  height: '1800vh',
 
-  // Lenis smooth scroll settings
+  // Lenis configuration
   lenis: {
-    lerp: 0.085,
+    lerp: SMOOTHING.lenisLerp,
     smoothWheel: true,
+    wheelMultiplier: 0.9,
     syncTouch: false,
+    touchMultiplier: 1.4,
   },
 
-  // Display progress smoothing: P += (target - P) * (1 - Math.exp(-dt * damping))
-  progressSmoothingDamping: 12,
+  smoothing: SMOOTHING,
 
-  // Timeline Progress Milestones (0.00 to 1.00)
+  coverFocus: COVER_FOCUS,
+
+  fps: FPS,
+  totalFrames: TOTAL_FRAMES,
+  handoffFrame: HANDOFF_FRAME,
+  lastFrame: LAST_FRAME,
+
+  // New Story Timeline (Step 2)
   timeline: {
-    // Part A: Video Scrub
-    partAStart: 0.0,
-    partAEnd: 0.42,
-    frameStart: 1,
-    frameHandoff: 193,
-    frameEnd: 204,
+    // Part A: Video Scrub (P 0.00 to 0.36)
+    partAStart: 0.00,
+    partAEnd: 0.36,
 
-    // Part B1: Open and Zoom
-    partB1Start: 0.42,
-    partB1End: 0.52,
-    websiteDissolveStart: 0.42,
-    websiteDissolveEnd: 0.46,
-    plateBlurMax: 2.5, // px of depth of field blur
+    // Part B: Push in & screen powers off to black (P 0.36 to 0.44)
+    partBStart: 0.36,
+    partBEnd: 0.44,
+    quadFadeStart: 0.38,
+    quadFadeEnd: 0.41,
 
-    // Part B2: Flatten to viewport
-    partB2Start: 0.52,
-    partB2End: 0.62,
+    // Part C: Statement on black (P 0.44 to 0.56)
+    partCStart: 0.44,
+    partCEnd: 0.56,
+    headlineRevealStart: 0.44,
+    headlineRevealEnd: 0.52,
+    subtextFadeStart: 0.52,
+    subtextFadeEnd: 0.56,
 
-    // Part C: Feature Tour
-    partCStart: 0.62,
-    partCEnd: 1.0,
+    // Part D: Aperture opening (P 0.56 to 0.62)
+    partDStart: 0.56,
+    partDEnd: 0.62,
+
+    // Part E: Revolving Pipeline Ring (P 0.60 to 0.90)
+    drumIntroStart: 0.60,
+    drumIntroEnd: 0.66,
+    drumRotateStart: 0.66,
+    drumRotateEnd: 0.88,
+    drumRecedeStart: 0.88,
+    drumRecedeEnd: 0.93,
+
+    // Part F: Closing beat with login (P 0.90 to 1.00)
+    closingStart: 0.90,
+    closingInteractiveStart: 0.93,
+    closingEnd: 1.00,
   },
 
-  // Target viewport fill for zoomed screen quad (90% width)
-  targetScreenQuadViewportWidthRatio: 0.9,
-
-  // Video quad in 1280x720 video coordinates
   initialVideoQuad: DEFAULT_SCREEN_QUAD,
   bleedPx: 2,
 
-  // Optional CROP constant (default 1.0: anchored top-left)
-  crop: 1.0,
-
-  // Iframe layout clamping bounds
-  iframe: {
-    minWidth: 1100,
-    maxWidth: 1920,
-    borderRadius: 8,
-  },
-
-  // Realism layers on the perspective screen
   realism: {
-    // Screen Tone filter
-    initialBrightness: 0.92,
-    initialContrast: 1.04,
-    initialSaturate: 0.95,
-
-    // Glare overlay: white linear-gradient diagonal reflection
-    maxGlareOpacity: 0.07,
-
-    // Notch dimensions relative to screen
-    notchWidthPercent: 9.0, // % of screen width
-    notchHeightPercent: 2.2, // % of screen height
-
-    // Edge softness
+    maxGlareOpacity: 0.05,
     edgeSoftnessBlurPx: 0.4,
-
-    // Motion coupling blur (velocity-dependent)
-    maxMotionBlurPx: 1.2,
-    motionBlurFactor: 0.05,
-
-    // Handheld life (subtle organic camera drift)
     handheldAmplitudePx: 1.5,
-    handheldSpeed: 0.0015,
-
-    // Plate film grain
-    grainOpacity: 0.03,
+    plateGrainOpacity: 0.04,
   },
 
-  // Captions for Part A by video timestamp with dynamic corner positioning
-  partACaptions: [
+  // Captions for Part A (0.00 to 0.36)
+  captions: [
     {
       id: 'record',
-      title: '01 Record',
-      description: 'You shoot hours of raw footage and write a script for it. CreatorAi starts there.',
-      startP: 0.0,
+      stepNumber: '01',
+      title: 'Record',
+      sentence: 'You shoot hours of raw footage and write a script for it. CreatorAi starts there.',
+      startP: 0.00,
       endP: 0.09,
-      position: 'bottom-left',
+      anchor: 'bottom-left',
     },
     {
       id: 'ingest',
-      title: '02 Ingest',
-      description: 'Footage, images and audio go into one library. Tag them, search them, and find them again.',
+      stepNumber: '02',
+      title: 'Ingest',
+      sentence: 'Footage, images and audio go into one library. Tag them, search them, and find them again.',
       startP: 0.09,
-      endP: 0.19,
-      position: 'top-right',
+      endP: 0.18,
+      anchor: 'bottom-left',
     },
     {
       id: 'understand',
-      title: '03 Understand',
-      description: 'Each line of your script is matched to the moment in the footage where you say it. Lines with no footage are flagged.',
-      startP: 0.19,
-      endP: 0.28,
-      position: 'bottom-right',
+      stepNumber: '03',
+      title: 'Understand',
+      sentence: 'Each line of your script is matched to the moment in the footage where you say it. Lines with no footage are flagged.',
+      startP: 0.18,
+      endP: 0.27,
+      anchor: 'bottom-left',
     },
     {
       id: 'cut',
-      title: '04 Cut',
-      description: 'Long recordings become short clips. Each clip shows why it was picked and carries a hook you can edit.',
-      startP: 0.28,
-      endP: 0.42,
-      position: 'top-left',
+      stepNumber: '04',
+      title: 'Cut',
+      sentence: 'Long recordings become short clips. Each clip shows why it was picked and carries a hook you can edit.',
+      startP: 0.27,
+      endP: 0.36,
+      anchor: 'top-left',
     },
-  ] as VideoCaption[],
+  ] as StoryCaption[],
 
-  // Caption for Part B
-  partBCaption: {
-    title: 'Open the workspace',
-    description: 'This is the real app, not a mockup.',
-    startP: 0.42,
-    endP: 0.62,
-    position: 'bottom-center' as CaptionPosition,
-  },
-
-  // 8 Chapters for Part C Tour with strategic corner positions
-  tourChapters: [
+  // 8 Revolving Pipeline Cards (Step 3)
+  pipelineCards: [
     {
       id: 'assets',
+      module: 'assets',
+      stepNumber: '01',
       name: 'Assets',
-      title: 'Assets',
-      description: 'One library for every video, image and audio file.',
-      route: '/assets',
-      startP: 0.62,
-      endP: 0.6675,
-      position: 'top-left',
+      input: 'Video, image and audio files you upload.',
+      whatHappens:
+        'Each file is added to one library. Thumbnails and waveforms are generated in your browser, and you add tags and folders.',
+      output: 'A searchable library that every later step reads from.',
+      youStayInControl: 'Rename, retag, move or delete any file at any time.',
     },
     {
       id: 'scripts',
+      module: 'scripts',
+      stepNumber: '02',
       name: 'Scripts and hooks',
-      title: 'Scripts and hooks',
-      description: 'Write the script, generate hooks, and keep the version you like.',
-      route: '/scripts',
-      startP: 0.6675,
-      endP: 0.715,
-      position: 'bottom-left',
+      input: 'A topic, audience, tone, platform and target length.',
+      whatHappens:
+        'The generator writes hook options, each labeled with the technique it uses, and a script split into hook, body and call to action.',
+      output: 'One pinned script, plus titles, a description and tags.',
+      youStayInControl: 'Edit every line, reorder sections and regenerate any hook.',
     },
     {
       id: 'footage',
+      module: 'footage',
+      stepNumber: '03',
       name: 'Footage match',
-      title: 'Footage match',
-      description: 'See which footage covers which script line, and what is still missing.',
-      route: '/footage',
-      startP: 0.715,
-      endP: 0.7625,
-      position: 'top-right',
+      input: 'The pinned script and a video from your library.',
+      whatHappens:
+        'Each script line is compared with the footage and marked Matched, Weak match or No footage found.',
+      output:
+        'A map from script lines to moments in the video, and a list of lines that still need footage.',
+      youStayInControl: 'Reassign any match by hand.',
     },
     {
       id: 'clips',
+      module: 'clips',
+      stepNumber: '04',
       name: 'Clips',
-      title: 'Clips',
-      description: 'Pick, trim and reorder the short clips the matcher found.',
-      route: '/clips',
-      startP: 0.7625,
-      endP: 0.81,
-      position: 'bottom-right',
+      input: 'The matched footage.',
+      whatHappens:
+        'Segments are scored and cut into short clips. Each clip records why it was picked and carries a suggested hook.',
+      output: 'A set of clips with in and out points.',
+      youStayInControl: 'Trim, accept, reject and reorder every clip.',
     },
     {
       id: 'editor',
+      module: 'editor',
+      stepNumber: '05',
       name: 'Editor',
-      title: 'Editor',
-      description: 'Apply AI edits as layers. Change any of them by hand.',
-      route: '/editor',
-      startP: 0.81,
-      endP: 0.8575,
-      position: 'top-left',
+      input: 'The clips you accepted.',
+      whatHappens:
+        'Suggested edits such as silence removal, captions, punch-ins and a title card are applied as separate layers marked AI.',
+      output: 'An edited timeline.',
+      youStayInControl:
+        'Change any AI layer by hand, convert it to manual, or revert a single change from the history list.',
     },
     {
       id: 'platforms',
+      module: 'platforms',
+      stepNumber: '06',
       name: 'Platforms',
-      title: 'Platforms',
-      description: 'Reframe one clip for each platform and edit each caption.',
-      route: '/platforms',
-      startP: 0.8575,
-      endP: 0.905,
-      position: 'bottom-left',
+      input: 'The edited clip.',
+      whatHappens:
+        'The clip is reframed for each platform with safe zones, and a title and caption are written for each one.',
+      output: 'One variant per platform.',
+      youStayInControl: 'Move the crop window and edit every title and caption.',
     },
     {
       id: 'workflow',
+      module: 'workflow',
+      stepNumber: '07',
       name: 'Workflow',
-      title: 'Workflow',
-      description: 'Move every piece of content from idea to published on one board.',
-      route: '/workflow',
-      startP: 0.905,
-      endP: 0.9525,
-      position: 'top-right',
+      input: 'Scripts, clips and platform variants.',
+      whatHappens:
+        'Each item becomes a card on a board that runs from idea to published, with a calendar for scheduled posts.',
+      output: 'A production plan you can follow.',
+      youStayInControl: 'Move cards and change dates freely.',
     },
     {
       id: 'insights',
+      module: 'insights',
+      stepNumber: '08',
       name: 'Insights',
-      title: 'Insights',
-      description: 'Import your performance data and see what your own numbers show.',
-      route: '/insights',
-      startP: 0.9525,
-      endP: 1.0,
-      position: 'bottom-right',
+      input: 'A performance CSV that you import.',
+      whatHappens:
+        'Charts and plain-language observations are calculated from your own data. Nothing is shown if the data cannot support it.',
+      output: 'What to repeat and what to drop.',
+      youStayInControl: 'Clear or replace the data at any time.',
     },
-  ] as TourChapter[],
+  ] as PipelineCardData[],
 };
 
-// easeInOutCubic easing helper
+// Pure math & easing utilities
 export function easeInOutCubic(x: number): number {
   const t = Math.max(0, Math.min(1, x));
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -259,4 +260,16 @@ export function lerp(a: number, b: number, t: number): number {
 
 export function clamp(val: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, val));
+}
+
+export function fract(x: number): number {
+  return x - Math.floor(x);
+}
+
+// Drum rotation step function: 20% dwell on each card and smooth glide
+export function drumStepFn(x: number): number {
+  const f = Math.floor(x);
+  const fr = fract(x);
+  const glide = easeInOutCubic(clamp((fr - 0.2) / 0.6, 0, 1));
+  return f + glide;
 }

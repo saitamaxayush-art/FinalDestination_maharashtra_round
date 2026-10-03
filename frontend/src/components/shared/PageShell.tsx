@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { PipelineProgress } from './PipelineProgress';
 import { NextStepCard } from './NextStepCard';
 
@@ -23,16 +24,29 @@ export const PageShell: React.FC<PageShellProps> = ({
   actions,
   children,
 }) => {
-  const isEmbed =
-    typeof window !== 'undefined' &&
-    (new URLSearchParams(window.location.search).get('embed') === '1');
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/dashboard');
 
+  // In dashboard module mode: compact toolbar with actions, no marketing hero or cards
+  if (isDashboard) {
+    return (
+      <div className="w-full h-full flex flex-col p-4 sm:p-6 overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 mb-4 border-b border-border/40 gap-4 flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <span className="font-serif text-xl sm:text-2xl text-white tracking-tight">
+              {title}
+            </span>
+          </div>
+          {actions && <div className="flex items-center gap-2">{actions}</div>}
+        </div>
+        <div className="flex-1 w-full">{children}</div>
+      </div>
+    );
+  }
+
+  // Standalone marketing route view
   return (
-    <div
-      className={`w-full min-h-screen ${
-        isEmbed ? 'pt-6 pb-12' : 'pt-28 pb-16'
-      } px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto`}
-    >
+    <div className="w-full min-h-screen pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-4 border-b border-border/60">
         <div className="space-y-2">
@@ -53,13 +67,13 @@ export const PageShell: React.FC<PageShellProps> = ({
       </div>
 
       {/* 8-step pipeline progress */}
-      {!isEmbed && stepNumber && <PipelineProgress currentStep={stepNumber} />}
+      {stepNumber && <PipelineProgress currentStep={stepNumber} />}
 
       {/* Main interactive workspace */}
       <div className="mt-6">{children}</div>
 
       {/* Bottom Next step card */}
-      {!isEmbed && nextPageTitle && nextPagePath && carryOverText && (
+      {nextPageTitle && nextPagePath && carryOverText && (
         <NextStepCard
           nextPageTitle={nextPageTitle}
           nextPagePath={nextPagePath}
