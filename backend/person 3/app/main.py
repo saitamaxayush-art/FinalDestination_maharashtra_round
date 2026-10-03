@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from .config import settings
 from .database import init_db
-from .routes import projects_router, assets_router, scripts_router, jobs_router
+from .routes import projects_router, assets_router, scripts_router, jobs_router, exports_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -35,6 +35,7 @@ app.include_router(projects_router)
 app.include_router(assets_router)
 app.include_router(scripts_router)
 app.include_router(jobs_router)
+app.include_router(exports_router)
 
 @app.get("/api/health")
 def health_check():

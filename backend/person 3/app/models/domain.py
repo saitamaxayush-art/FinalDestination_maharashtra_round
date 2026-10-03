@@ -164,10 +164,14 @@ class Export(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     clip_id = Column(Integer, ForeignKey("clips.id", ondelete="CASCADE"), index=True, nullable=False)
-    platform_variant_id = Column(Integer, ForeignKey("platform_variants.id", ondelete="SET NULL"), index=True, nullable=True)
-    status = Column(String, nullable=False)
-    file_path = Column(String)
+    platform_adaptation_id = Column(Integer, ForeignKey("platform_variants.id", ondelete="SET NULL"), index=True, nullable=False)
+    job_id = Column(Integer, ForeignKey("jobs.id", ondelete="SET NULL"), index=True, nullable=True)
+    status = Column(String, default="pending", nullable=False)
+    progress = Column(Float, default=0.0)
+    output_path = Column(String, nullable=True)
+    error_message = Column(Text, nullable=True)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     clip = relationship("Clip", back_populates="exports")
     platform_variant = relationship("PlatformVariant", back_populates="exports")
+    job = relationship("Job")
