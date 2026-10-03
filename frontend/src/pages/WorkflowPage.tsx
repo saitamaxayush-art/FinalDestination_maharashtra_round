@@ -13,7 +13,9 @@ import {
   GripHorizontal,
   FileText,
   SlidersHorizontal,
+  Cpu,
 } from 'lucide-react';
+import { WorkflowCanvas } from '../components/workflow/WorkflowCanvas';
 
 export const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
@@ -25,7 +27,7 @@ export const WorkflowPage: React.FC = () => {
     deleteWorkflowCard,
   } = useStore();
 
-  const [viewMode, setViewMode] = useState<'kanban' | 'calendar'>('kanban');
+  const [viewMode, setViewMode] = useState<'canvas' | 'kanban' | 'calendar'>('canvas');
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [quickAddColumn, setQuickAddColumn] = useState<WorkflowColumn | null>(null);
   const [quickAddTitle, setQuickAddTitle] = useState('');
@@ -71,7 +73,7 @@ export const WorkflowPage: React.FC = () => {
   return (
     <PageShell
       title="Content Operations Workflow"
-      description="Track the lifecycle of every content asset across production stages with unified Kanban and distribution calendar views."
+      description="Design, connect, and automate production pipelines with node-based canvas logic, multi-stage Kanban queues, and distribution calendar views."
       stepNumber={7}
       nextPageTitle="Insights"
       nextPagePath="/insights"
@@ -80,6 +82,18 @@ export const WorkflowPage: React.FC = () => {
         <div className="flex items-center gap-2">
           {/* View toggle */}
           <div className="flex items-center bg-secondary p-0.5 rounded-md border border-border">
+            <button
+              type="button"
+              onClick={() => setViewMode('canvas')}
+              className={`px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                viewMode === 'canvas'
+                  ? 'bg-white text-black'
+                  : 'text-muted-foreground hover:text-white'
+              }`}
+            >
+              <Cpu className="w-3.5 h-3.5" />
+              <span>Canvas Flow</span>
+            </button>
             <button
               type="button"
               onClick={() => setViewMode('kanban')}
@@ -108,7 +122,9 @@ export const WorkflowPage: React.FC = () => {
         </div>
       }
     >
-      {viewMode === 'kanban' ? (
+      {viewMode === 'canvas' ? (
+        <WorkflowCanvas />
+      ) : viewMode === 'kanban' ? (
         /* KANBAN BOARD (7 COLUMNS) */
         <div className="w-full overflow-x-auto pb-6">
           <div className="flex gap-4 min-w-[1300px]">
