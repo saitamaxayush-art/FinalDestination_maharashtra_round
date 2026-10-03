@@ -1,0 +1,4 @@
+faster-whisper==1.2.1
+onnxruntime==1.17.1
+av==14.0.1
+numpy<2
