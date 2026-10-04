@@ -106,10 +106,11 @@ export const ScriptsPage: React.FC = () => {
   return (
     <PageShell
       title="Script and Hook Generation"
-      description="Frame concepts with high-retention hooks and assemble modular script blocks for speech alignment."
+      description="Turn a creative brief into hooks and a structured script. Frame concepts with high-retention hooks and assemble modular script blocks for speech alignment."
       stepNumber={2}
       nextPageTitle="Footage Match"
       nextPagePath="/footage"
+      nextPageCtaLabel="Match Script to Footage"
       carryOverText={`Pinned hook "${script.hooks.find((h) => h.id === script.pinnedHookId)?.text.slice(0, 35)}..." and ${script.sections.length} script sections ready for audio-visual matching.`}
       actions={
         <button

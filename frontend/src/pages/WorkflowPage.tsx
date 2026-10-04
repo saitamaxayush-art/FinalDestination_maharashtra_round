@@ -77,6 +77,7 @@ export const WorkflowPage: React.FC = () => {
       stepNumber={7}
       nextPageTitle="Insights"
       nextPagePath="/insights"
+      nextPageCtaLabel="Continue to Insights"
       carryOverText={`${publishedCount} published pieces feed into live session production patterns on the Insights dashboard.`}
       actions={
         <div className="flex items-center gap-2">

@@ -11,6 +11,7 @@ import {
   Check,
   Move,
 } from 'lucide-react';
+import { VideoPlayer } from '../components/shared/VideoPlayer';
 
 export const PlatformsPage: React.FC = () => {
   const {
@@ -19,6 +20,10 @@ export const PlatformsPage: React.FC = () => {
     setSelectedPlatformId,
     updatePlatformVariant,
     queueVariantToWorkflow,
+    assets,
+    clips,
+    activeClipId,
+    selectedAssetId,
   } = useStore();
 
   const [isAdaptingAll, setIsAdaptingAll] = useState(false);
@@ -64,13 +69,20 @@ export const PlatformsPage: React.FC = () => {
 
   const queuedCount = Object.values(platformVariants).filter((v) => v.isQueued).length;
 
+  const activeAsset =
+    assets.find((a) => a.id === selectedAssetId) ||
+    assets.find((a) => a.id === clips.find((c) => c.status === 'accepted')?.sourceAssetId) ||
+    assets[0];
+  const videoSrc = activeAsset?.backendUrl || activeAsset?.url;
+
   return (
     <PageShell
       title="Multi-Platform Adaptation"
-      description="Reframes video aspect ratios, tests safe zone margin overlays, and tailors captions per distribution channel."
+      description="One piece of content → multiple platform-ready variants. Reframes video aspect ratios, tests safe zone margin overlays, and tailors captions per distribution channel."
       stepNumber={6}
       nextPageTitle="Workflow"
       nextPagePath="/workflow"
+      nextPageCtaLabel="Open Production Pipeline"
       carryOverText={`${queuedCount} platform variants queued into Scheduled column on Workflow board.`}
       actions={
         <div className="flex items-center gap-2">
@@ -190,6 +202,13 @@ export const PlatformsPage: React.FC = () => {
                 transition={{ type: 'spring', stiffness: 220, damping: 25 }}
                 className={`w-full ${getAspectRatioPadding()} mx-auto bg-black rounded-md border border-white/20 relative overflow-hidden flex flex-col justify-between p-3 select-none`}
               >
+                {videoSrc && (
+                  <VideoPlayer
+                    src={videoSrc}
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none"
+                    controls={false}
+                  />
+                )}
                 {/* Safe Zone Margin Guides */}
                 <div
                   className="absolute inset-0 pointer-events-none border border-dashed border-warn/60"

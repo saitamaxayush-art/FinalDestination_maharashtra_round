@@ -35,7 +35,7 @@ export const WorkflowCanvas: React.FC = () => {
   const { addWorkflowCard } = useStore();
 
   // Dynamic state of the canvas pipeline
-  const [topic, setTopic] = useState('AI Marketing & Workflow Automation');
+  const [topic, setTopic] = useState('AI Video Production & YouTube Shorts');
   const [contentType, setContentType] = useState('Short-form Video');
   const [tone, setTone] = useState('Direct & Punchy');
   const [keywords, setKeywords] = useState('agentic workflows, growth, production');
@@ -168,7 +168,7 @@ export const WorkflowCanvas: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-1">
                       <span className="text-xs font-semibold text-white truncate">
-                        Daily LinkedIn Auto-Post
+                        Daily Shorts Auto-Post
                       </span>
                       <span className="text-[10px] text-muted-foreground font-mono">23m ago</span>
                     </div>
@@ -233,7 +233,7 @@ export const WorkflowCanvas: React.FC = () => {
                     <CheckCircle2 className="w-3.5 h-3.5 text-ok mt-0.5 flex-shrink-0" />
                     <div>
                       <span className="text-xs font-semibold text-white block leading-snug">
-                        Social Post: Top AI Workflows 2026
+                        Shorts: Top AI Workflows 2026
                       </span>
                       <span className="text-[10px] text-muted-foreground font-mono">
                         Sentiment Score: +14.2 / -1.9
@@ -256,7 +256,7 @@ export const WorkflowCanvas: React.FC = () => {
                     <CheckCircle2 className="w-3.5 h-3.5 text-ok mt-0.5 flex-shrink-0" />
                     <div>
                       <span className="text-xs font-semibold text-white block leading-snug">
-                        Blog Draft: AI Automation Ops
+                        Script Draft: AI Automation Ops
                       </span>
                       <span className="text-[10px] text-muted-foreground font-mono">
                         Word Count: 1,230
@@ -668,7 +668,7 @@ export const WorkflowCanvas: React.FC = () => {
                         : 'text-muted-foreground hover:text-white'
                     }`}
                   >
-                    Blog Version
+                    Script Version
                   </button>
                 </div>
 
@@ -976,10 +976,10 @@ export const WorkflowCanvas: React.FC = () => {
                 )}
               </div>
 
-              {/* BLOG PREVIEW */}
+              {/* SCRIPT PREVIEW */}
               <div className="p-2.5 rounded-md bg-background/80 border border-border/70 space-y-1 text-xs">
                 <div className="flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-                  <span className="uppercase">Blog Preview</span>
+                  <span className="uppercase">Script Preview</span>
                   <span>1,240 words</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground line-clamp-2 leading-relaxed">

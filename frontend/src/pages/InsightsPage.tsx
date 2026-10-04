@@ -198,7 +198,7 @@ export const InsightsPage: React.FC = () => {
   return (
     <PageShell
       title="Creator Intelligence"
-      description="Honest performance analytics derived exclusively from your own demo session or imported CSV logs."
+      description="Measure what performs and feed those signals back into production."
       stepNumber={8}
       actions={
         <div className="flex items-center gap-2">

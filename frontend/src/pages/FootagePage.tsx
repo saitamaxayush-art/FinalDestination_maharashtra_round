@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
+import { VideoPlayer } from '../components/shared/VideoPlayer';
 import { useStore } from '../store/useStore';
 import { matchScriptToFootage } from '../services/mockAiService';
 import {
@@ -22,9 +23,10 @@ export const FootagePage: React.FC = () => {
     scriptLineMatches,
     setScriptLineMatches,
     reassignMatch,
+    selectedAssetId,
+    setSelectedAssetId,
   } = useStore();
 
-  const [selectedAssetId, setSelectedAssetId] = useState<string>('sample_asset_1');
   const [isMatching, setIsMatching] = useState(false);
   const [activeLineId, setActiveLineId] = useState<string | null>('line_0');
   const [activeSegmentId, setActiveSegmentId] = useState<string | null>('seg_1');
@@ -68,10 +70,11 @@ export const FootagePage: React.FC = () => {
   return (
     <PageShell
       title="Script-to-Video Understanding"
-      description="Synchronize spoken script lines with raw footage speech segments. Reassign matches by dragging lines directly onto timeline blocks."
+      description="AI aligns script statements with the most relevant footage segments. Synchronize spoken script lines with raw footage speech segments. Reassign matches by dragging lines directly onto timeline blocks."
       stepNumber={3}
       nextPageTitle="Clips"
       nextPagePath="/clips"
+      nextPageCtaLabel="Generate Clips"
       carryOverText={`${footageSegments.length} verified speech segments ready for candidate clip detection.`}
       actions={
         <button
@@ -204,16 +207,17 @@ export const FootagePage: React.FC = () => {
 
         {/* RIGHT COLUMN: Footage Timeline & Video Scrub Preview */}
         <div className="space-y-6">
-          {/* Simulated Video Player & Scrub Frame */}
+          {/* Video Player */}
           <div className="hairline-card p-4 space-y-3">
             <div className="w-full h-56 rounded-md bg-black border border-border flex flex-col items-center justify-center relative overflow-hidden">
-              <Play className="w-10 h-10 text-signal opacity-80 mb-2" />
-              <span className="text-xs text-white font-semibold">
-                {activeSegment ? activeSegment.label : 'Select a line to scrub'}
-              </span>
-              <span className="text-[11px] font-mono text-muted-foreground mt-1">
-                Timecode: {activeSegment ? `00:${activeSegment.startTime.toFixed(1)} - 00:${activeSegment.endTime.toFixed(1)}` : '00:00.0'}
-              </span>
+              <VideoPlayer 
+                src={(() => {
+                  const a = assets.find(a => a.id === selectedAssetId);
+                  return a?.backendUrl || a?.url;
+                })()}
+                className="absolute inset-0"
+                controls={true}
+              />
             </div>
 
             {/* Segment blocks list (Drop Target) */}

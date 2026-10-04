@@ -332,15 +332,15 @@ const INITIAL_WORKFLOW_CARDS: WorkflowCard[] = [
     id: 'wf_4',
     title: 'One Timeline Studio Workflow',
     column: 'Published',
-    platform: 'LinkedIn',
+    platform: 'YouTube Shorts',
     dueDate: '2026-09-28',
     checklist: [
       { id: 'c7', text: 'Publish post with video', done: true },
     ],
-    notes: 'Live on LinkedIn profile. Performing well with creators.',
+    notes: 'Live on YouTube profile. Performing well with creators.',
     relatedType: 'clip',
     activityLog: [
-      { id: 'a7', action: 'Published to LinkedIn', date: '2026-09-28' },
+      { id: 'a7', action: 'Published to YouTube Shorts', date: '2026-09-28' },
     ],
   },
 ];
@@ -435,7 +435,7 @@ export const useStore = create<AppState>()(
             size: 428000000,
             duration: 184,
             resolution: '1920x1080',
-            url: '',
+            url: '/exports/test_layer1.mp4',
             folderId: 'f_raw',
             tags: ['A-Roll', 'Main Interview', '4K'],
             createdAt: '2026-10-02',

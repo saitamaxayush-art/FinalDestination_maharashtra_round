@@ -7,6 +7,7 @@ interface NextStepCardProps {
   nextPagePath: string;
   carryOverText: string;
   stepNumber: number;
+  ctaLabel?: string;
 }
 
 export const NextStepCard: React.FC<NextStepCardProps> = ({
@@ -14,6 +15,7 @@ export const NextStepCard: React.FC<NextStepCardProps> = ({
   nextPagePath,
   carryOverText,
   stepNumber,
+  ctaLabel,
 }) => {
   return (
     <div className="w-full mt-12 mb-6 hairline-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -35,7 +37,7 @@ export const NextStepCard: React.FC<NextStepCardProps> = ({
         to={nextPagePath}
         className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md bg-white text-black font-semibold text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform self-start sm:self-center flex-shrink-0"
       >
-        <span>Proceed to {nextPageTitle}</span>
+        <span>{ctaLabel || `Proceed to ${nextPageTitle}`}</span>
         <ArrowRight className="w-4 h-4" />
       </Link>
     </div>

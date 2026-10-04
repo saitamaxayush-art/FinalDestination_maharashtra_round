@@ -13,6 +13,8 @@ export interface Asset {
   createdAt: string;
   isSample?: boolean;
   thumbnail?: string;
+  backendId?: number;
+  backendUrl?: string;
 }
 
 export interface Folder {

@@ -10,6 +10,7 @@ interface PageShellProps {
   nextPageTitle?: string;
   nextPagePath?: string;
   carryOverText?: string;
+  nextPageCtaLabel?: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
 }
@@ -21,6 +22,7 @@ export const PageShell: React.FC<PageShellProps> = ({
   nextPageTitle,
   nextPagePath,
   carryOverText,
+  nextPageCtaLabel,
   actions,
   children,
 }) => {
@@ -79,6 +81,7 @@ export const PageShell: React.FC<PageShellProps> = ({
           nextPagePath={nextPagePath}
           carryOverText={carryOverText}
           stepNumber={(stepNumber || 1) + 1}
+          ctaLabel={nextPageCtaLabel}
         />
       )}
     </div>

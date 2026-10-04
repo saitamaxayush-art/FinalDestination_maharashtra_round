@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageShell } from '../components/shared/PageShell';
+import { VideoPlayer } from '../components/shared/VideoPlayer';
 import { useStore } from '../store/useStore';
 import { detectClips } from '../services/mockAiService';
 import {
@@ -19,11 +20,13 @@ export const ClipsPage: React.FC = () => {
   const {
     script,
     clips,
+    assets,
     setClips,
     updateClipTimes,
     acceptClip,
     rejectClip,
     duplicateClip,
+    selectedAssetId,
   } = useStore();
 
   const [isDetecting, setIsDetecting] = useState(false);
@@ -41,7 +44,7 @@ export const ClipsPage: React.FC = () => {
 
     setDetectionStep('Cutting candidate short-form boundaries...');
     const pinnedHook = script.hooks.find((h) => h.id === script.pinnedHookId);
-    const newClips = await detectClips('sample_asset_1', pinnedHook?.text);
+    const newClips = await detectClips(selectedAssetId || assets[0]?.id || 'sample_asset_1', pinnedHook?.text);
 
     setClips(newClips);
     setIsDetecting(false);
@@ -53,10 +56,11 @@ export const ClipsPage: React.FC = () => {
   return (
     <PageShell
       title="Automated Clip Generation"
-      description="Extract high-retention 9:16 vertical cuts from long-form footage with trim boundary controls."
+      description="Long-form source → candidate moments → accepted clip → open in Editor. Extract high-retention 9:16 vertical cuts from long-form footage with trim boundary controls."
       stepNumber={4}
       nextPageTitle="Editor"
       nextPagePath="/editor"
+      nextPageCtaLabel="Open Accepted Clip in Editor"
       carryOverText={`${acceptedCount} accepted clips ready to open in the multi-track timeline Editor.`}
       actions={
         <button
@@ -224,20 +228,22 @@ export const ClipsPage: React.FC = () => {
                   </div>
 
                   {/* 9:16 Video Preview Frame */}
-                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between p-3 relative overflow-hidden">
-                    <div className="flex items-center justify-between text-[10px] font-mono text-white/80 z-10">
+                  <div className="w-full aspect-[9/16] max-h-64 mx-auto rounded-md bg-black border border-border flex flex-col justify-between relative overflow-hidden">
+                    <VideoPlayer 
+                      src={(() => {
+                        const a = assets.find(a => a.id === clip.sourceAssetId);
+                        return a?.backendUrl || a?.url;
+                      })()}
+                      className="absolute inset-0"
+                      controls={true}
+                    />
+                    
+                    <div className="absolute top-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono text-white/80 z-10 pointer-events-none">
                       <span className="px-1.5 py-0.5 rounded bg-black/60">
                         IN 00:{clip.startTime.toFixed(1)}
                       </span>
                       <span className="px-1.5 py-0.5 rounded bg-black/60">
                         OUT 00:{clip.endTime.toFixed(1)}
-                      </span>
-                    </div>
-
-                    <div className="text-center z-10">
-                      <Play className="w-8 h-8 text-signal mx-auto mb-1 opacity-90" />
-                      <span className="text-[11px] text-white font-medium block">
-                        Preview Cut
                       </span>
                     </div>
 

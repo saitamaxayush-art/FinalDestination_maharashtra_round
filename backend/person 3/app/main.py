@@ -41,7 +41,10 @@ app.include_router(exports_router)
 
 @app.get("/api/health")
 def health_check():
+    import shutil
+    ffmpeg_available = shutil.which("ffmpeg") is not None or "FFMPEG_PATH" in os.environ
     return {
         "status": "ok",
-        "service": settings.app_name
+        "service": settings.PROJECT_NAME,
+        "ffmpeg": ffmpeg_available
     }

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { PageShell } from '../components/shared/PageShell';
+import { VideoPlayer } from '../components/shared/VideoPlayer';
 import { useStore } from '../store/useStore';
 import { Asset, AssetType } from '../types';
 import {
@@ -101,6 +102,28 @@ export const AssetsPage: React.FC = () => {
         }
       }
 
+      let backendId: number | undefined;
+      let backendUrl: string | undefined;
+
+      try {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const res = await fetch(`${API_BASE_URL}/api/projects/1/assets`, {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          backendId = data.id;
+          backendUrl = `${API_BASE_URL}/${data.file_path.replace(/\\/g, '/')}`;
+        }
+      } catch (err) {
+        console.error('Failed to upload to backend:', err);
+      }
+
       const newAsset: Asset = {
         id: `usr_${Date.now()}_${i}`,
         name: file.name,
@@ -113,6 +136,8 @@ export const AssetsPage: React.FC = () => {
         tags: [detectedType.toUpperCase()],
         createdAt: new Date().toISOString().split('T')[0],
         thumbnail,
+        backendId,
+        backendUrl,
       };
 
       addAsset(newAsset);
@@ -178,10 +203,11 @@ export const AssetsPage: React.FC = () => {
   return (
     <PageShell
       title="Asset Management"
-      description="Ingest, tag and organize raw footage, voice tracks and production stills. All processing stays local."
+      description="Start with raw footage, audio, and supporting assets. Ingest, tag and organize. All processing stays local."
       stepNumber={1}
       nextPageTitle="Scripts"
       nextPagePath="/scripts"
+      nextPageCtaLabel="Continue to Script"
       carryOverText={`${assets.length} media assets in library ready for script mapping and footage detection.`}
       actions={
         <div className="flex items-center gap-2">
@@ -711,13 +737,13 @@ export const AssetsPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
             {/* Player / Zoom Container */}
             <div className="w-full h-56 rounded-md bg-black border border-border flex items-center justify-center overflow-hidden relative">
-              {selectedAsset.url ? (
+              {selectedAsset.url || selectedAsset.backendUrl ? (
                 selectedAsset.type === 'video' ? (
-                  <video src={selectedAsset.url} controls className="w-full h-full object-contain" />
+                  <VideoPlayer src={selectedAsset.backendUrl || selectedAsset.url} className="w-full h-full" />
                 ) : selectedAsset.type === 'audio' ? (
-                  <audio src={selectedAsset.url} controls className="w-3/4" />
+                  <audio src={selectedAsset.backendUrl || selectedAsset.url} controls className="w-3/4" />
                 ) : (
-                  <img src={selectedAsset.url} alt={selectedAsset.name} className="w-full h-full object-contain" />
+                  <img src={selectedAsset.backendUrl || selectedAsset.url} alt={selectedAsset.name} className="w-full h-full object-contain" />
                 )
               ) : (
                 <div className="text-center p-6 space-y-2">
